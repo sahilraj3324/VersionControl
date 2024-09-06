@@ -62,7 +62,10 @@ yargs(hideBin(process.argv))
                     type : "string"
                 })
             },
-            revertrepo    
+            (argv) => {
+                revertrepo(argv.commitID)
+            }
+                
 
         )
     
