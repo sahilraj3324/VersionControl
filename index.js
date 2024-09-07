@@ -11,6 +11,12 @@ const { revertrepo } = require("./controller/revert");
 
 yargs(hideBin(process.argv))
 .command(
+    "start" , 
+    "start a new server" ,
+     {} ,
+    startserver
+    )
+.command(
     "init" , 
     "Initializing a new reposetory" ,
      {} ,
@@ -70,3 +76,7 @@ yargs(hideBin(process.argv))
         )
     
     .demandCommand(1, "you need atleast one command").help().argv;
+
+    function startserver(){
+        console.log("server is started")
+    }
