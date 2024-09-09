@@ -1,13 +1,24 @@
+const express = require('express')
+const dotenv = require("dotenv")
+const mongoose = require("mongoose")
+const cors = require("cors")
+const http = require("http")
+const bodyParser = require("body-parser")
+const {Server} = require("socket.io")
+
+
 const yargs = require("yargs");
-
 const {hideBin} = require("yargs/helpers")
-
 const {initrepo} = require("./controller/init")
 const {addrepo} = require("./controller/add")
 const {commitrepo} = require("./controller/commit")
 const {pushrepo } = require("./controller/push");
 const { pullrepo } = require("./controller/pull");
 const { revertrepo } = require("./controller/revert");
+const exp = require('constants')
+const { Socket } = require('dgram')
+
+dotenv.config()
 
 yargs(hideBin(process.argv))
 .command(
@@ -78,5 +89,50 @@ yargs(hideBin(process.argv))
     .demandCommand(1, "you need atleast one command").help().argv;
 
     function startserver(){
-        console.log("server is started")
+        const app = express()
+        const port = process.env.PORT || 3000
+
+        app.use(bodyParser.json())
+        app.use(express.json())
+        const mongoURI = process.env.MONGODB_URI
+
+        mongoose
+        .connect(mongoURI)
+        .then(()=> console.log("DataBase is connected"))
+        .catch((err)=>console.error("error connection to db" , err))
+
+        app.use(cors({origin:"*"}))
+        app.get("/" , (req, res) =>{
+            res.send("welcome!")
+        })
+
+        const httpServer = http.createServer(app)
+        const io = new Server(httpServer , {
+            cors: {
+                origin :"*",
+                methods: ["GET" , "POST"],
+            }
+        } )
+         let user = "test"
+        io.on("connection" , (socket) => {
+            socket.on("join room" , (userID) =>{
+                user = userID 
+                console.log("=======")
+                console.log(user)
+                console.log("=======")
+                socket.join(userID)
+            })
+        })
+
+        const db = mongoose.connection
+
+        db.once("open" , async () => {
+            console.log("CRUD operations are being called")
+
+            //CRUD Operation
+        })
+
+        httpServer.listen(port , () =>{
+            console.log(`Server running on Port ${port}`)
+        })
     }
