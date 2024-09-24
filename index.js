@@ -5,6 +5,7 @@ const cors = require("cors")
 const http = require("http")
 const bodyParser = require("body-parser")
 const {Server} = require("socket.io")
+const mainRouter = require("./routes/main.router")
 
 
 const yargs = require("yargs");
@@ -102,9 +103,9 @@ yargs(hideBin(process.argv))
         .catch((err)=>console.error("error connection to db" , err))
 
         app.use(cors({origin:"*"}))
-        app.get("/" , (req, res) =>{
-            res.send("welcome!")
-        })
+
+        app.use("/" , mainRouter)
+        
 
         const httpServer = http.createServer(app)
         const io = new Server(httpServer , {
