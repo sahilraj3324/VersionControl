@@ -40,4 +40,4 @@ const UserSchema = new Schema({
 
 const User = mongoos.model("User" , UserSchema)
 
-export default User
+module.exports =  User
