@@ -1,32 +1,27 @@
-
-const mongoos = require('mongoose')
-const { required } = require('yargs')
-const { default: Repositories } = require('./repoModel')
-const { default: mongoose } = require('mongoose')
-const {Schema} = mongoos
-
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const IssueSchema = new Schema({
-    title : {
-        type : String ,
-        required : true ,
-    },
-    description : {
-        type : String ,
-        required : true,
-    },
-    status : {
-        type : String ,
-        enum : ["open" , "closed"],
-        default : "open",
-    },
-    repositories : {
-        type : Schema.Types.ObjectId,
+    title: {
+        type: String,
         required: true,
-        ref : "Repositories",
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    status: {
+        type: String,
+        enum: ['open', 'closed'],
+        default: 'open',
+    },
+    repository: { // Singular field since one issue belongs to one repository
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'Repository', // Ensure it references the correct model
     }
-})
+});
 
-const Issue = mongoose.model("Issue " , IssueSchema)
+const Issue = mongoose.model('Issue', IssueSchema); // No extra space in the model name
 
-export default Issue
+module.exports = Issue;

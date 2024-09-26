@@ -1,41 +1,39 @@
+const mongoose = require('mongoose'); 
+const { Schema } = mongoose;
 
-const mongoos = require('mongoose')
-const {Schema} = mongoos
-
-
+// Define the Repository Schema
 const RepositorySchema = new Schema({
-    name : {
-        type : String, 
-        required : true,
-        unique : true 
+  name: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  description: {
+    type: String,
+  },
+  issues: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Issue', // Referencing the Issue model
     },
-    description : {
-        type : String,
-    },
-    content : [
-        {
-            type : String,
-        }
-    ],
-    visibility : {
-        type : Boolean
-    },
+  ],
+  content: [
+    {
+      type: String,
+    }
+  ],
+  visibility: {
+    type: Boolean
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: 'User', // Referencing the User model
+    required: true,
+  },
+  
+});
 
-    owner : {
-        type : Schema.Types.ObjectId,
-        ref : "User",
-        required : true ,
-    },
+// Register the Repository model
+const Repository = mongoose.model('Repository', RepositorySchema); // Singular model name
 
-    issue : [
-        {
-            type : Schema.Types.ObjectId,
-            ref : "Issue"
-        }
-    ]
-
-})
-
-const Repositories = mongoos.model("Repositories" , RepositorySchema)
-
-export default Repositories
+module.exports = Repository;
