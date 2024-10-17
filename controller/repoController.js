@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Repositories = require('../models/repoModel');
 const User = require("../models/userModel");
 const Issue = require("../models/issueModel");
-const Repository = require("../models/repoModel");
 
 
 async function createRepo(req, res) {
@@ -37,7 +36,7 @@ async function createRepo(req, res) {
 const getallRepo = async (req, res) => {
     try {
         const repos = await Repositories.find({})
-            .populate('owner', 'name email') 
+            .populate('owner') 
             .populate('issues'); 
 
         res.status(200).json(repos);
@@ -52,7 +51,7 @@ async function fetchedRepobyId(req, res) {
     const { id } = req.params; 
     try {
         const repo = await Repositories.findById(id)
-            .populate("owner", "name email")
+            .populate("owner")
             .populate("issues");
         
         if (!repo) {
@@ -68,10 +67,10 @@ async function fetchedRepobyId(req, res) {
 
 
 async function fetchedRepobyName(req, res) {
-    const { repoName } = req.params; 
+    const { name } = req.params; 
     try {
-        const repo = await Repositories.findOne({ name: repoName }) 
-            .populate("owner", "name email")
+        const repo = await Repositories.findOne({ name }) 
+            .populate("owner")
             .populate("issues");
 
         if (!repo) {
@@ -87,9 +86,9 @@ async function fetchedRepobyName(req, res) {
 
 
 async function fetchRepoforcurrentuser(req, res) {
-    const userid = req.user;
+    const {userId} = req.params;
     try{
-        const repo = await Repositories.find({owner : userid})
+        const repo = await Repositories.find({ userId})
         if (!repo || repo.length==0){
             return res.status(404).json({error : "user repo not found!"})
         }
@@ -147,7 +146,6 @@ async function toggleVisibiltybyID(req, res) {
         res.status(500).send("Server error!");
     }
 }
-
 
 async function deleteRepobyID(req, res) {
     const { id } = req.params
